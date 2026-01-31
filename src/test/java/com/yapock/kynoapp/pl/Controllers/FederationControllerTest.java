@@ -2,7 +2,6 @@ package com.yapock.kynoapp.pl.Controllers;
 
 import com.yapock.kynoapp.bll.FederationService;
 import com.yapock.kynoapp.pl.federation.FederationDTO;
-import com.yapock.kynoapp.pl.federation.FederationForm;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,7 +48,6 @@ class FederationControllerTest {
 
     private UUID federationId;
     private FederationDTO testFederationDTO;
-    private FederationForm testFederationForm;
 
     /**
      * Initializes the test environment before each test method is executed.
@@ -68,18 +66,12 @@ class FederationControllerTest {
     void setUp() {
         federationId = UUID.randomUUID();
 
-        testFederationDTO = new FederationDTO(
-                federationId,
-                "Test Federation",
-                "Test Country",
-                "https://example.invalid"
-        );
-
-        testFederationForm = new FederationForm(
-                "Test Federation",
-                "Test Country",
-                "https://example.invalid"
-        );
+        testFederationDTO = FederationDTO.builder()
+                .id(federationId)
+                .name("Test Federation")
+                .country("Test Country")
+                .url("https://example.invalid")
+                .build();
     }
 
     /**
@@ -114,9 +106,9 @@ class FederationControllerTest {
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$").isArray())
                 .andExpect(jsonPath("$[0].id").value(federationId.toString()))
-                .andExpect(jsonPath("$[0].name").value(testFederationDTO.name()))
-                .andExpect(jsonPath("$[0].country").value(testFederationDTO.country()))
-                .andExpect(jsonPath("$[0].url").value(testFederationDTO.url()));
+                .andExpect(jsonPath("$[0].name").value(testFederationDTO.getName()))
+                .andExpect(jsonPath("$[0].country").value(testFederationDTO.getCountry()))
+                .andExpect(jsonPath("$[0].url").value(testFederationDTO.getUrl()));
     }
 
     /**
@@ -153,9 +145,9 @@ class FederationControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.id").value(federationId.toString()))
-                .andExpect(jsonPath("$.name").value(testFederationDTO.name()))
-                .andExpect(jsonPath("$.country").value(testFederationDTO.country()))
-                .andExpect(jsonPath("$.url").value(testFederationDTO.url()));
+                .andExpect(jsonPath("$.name").value(testFederationDTO.getName()))
+                .andExpect(jsonPath("$.country").value(testFederationDTO.getCountry()))
+                .andExpect(jsonPath("$.url").value(testFederationDTO.getUrl()));
     }
 
     /**
@@ -207,10 +199,10 @@ class FederationControllerTest {
     void createFederation_returnsCreated_andCallsService() throws Exception {
         mockMvc.perform(post(BASE_PATH)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(testFederationForm)))
+                        .content(objectMapper.writeValueAsString(testFederationDTO)))
                 .andExpect(status().isCreated());
 
-        verify(federationService).create(any(FederationForm.class));
+        verify(federationService).create(any(FederationDTO.class));
     }
 
     /**
@@ -246,10 +238,10 @@ class FederationControllerTest {
         mockMvc.perform(put(BASE_PATH + "/" + federationId)
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(testFederationForm)))
+                        .content(objectMapper.writeValueAsString(testFederationDTO)))
                 .andExpect(status().isNoContent());
 
-        verify(federationService).update(eq(federationId), any(FederationForm.class));
+        verify(federationService).update(eq(federationId), any(FederationDTO.class));
     }
 
     /**

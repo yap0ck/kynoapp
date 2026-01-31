@@ -1,8 +1,8 @@
 package com.yapock.kynoapp.pl.Controllers;
 
 import com.yapock.kynoapp.bll.FederationService;
+import com.yapock.kynoapp.dal.mappers.FederationMappers;
 import com.yapock.kynoapp.pl.federation.FederationDTO;
-import com.yapock.kynoapp.pl.federation.FederationForm;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -10,7 +10,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 /**
@@ -60,6 +59,7 @@ public class FederationController {
      * and logic while ensuring that the controller remains focused on HTTP request handling.
      */
     private final FederationService federationService;
+    private final FederationMappers federationMappers;
 
     /**
      * Retrieves a list of all federations.
@@ -80,8 +80,9 @@ public class FederationController {
      * If the federation with the specified ID is not found, the response may include an appropriate HTTP status.
      */
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
-    public ResponseEntity<Optional<FederationDTO>> getFederation(@PathVariable UUID id){
-        return ResponseEntity.of(Optional.of(Optional.ofNullable(federationService.findById(id).orElseThrow(() -> new NotFoundException("Federation with ID " + id + " not found")))));
+    public ResponseEntity<FederationDTO> getFederation(@PathVariable UUID id){
+        return ResponseEntity.ofNullable(federationService.findById(id)
+                .orElseThrow(() -> new NotFoundException("Federation with ID " + id + " not found")));
     }
 
     /**
@@ -91,7 +92,7 @@ public class FederationController {
      * @return a ResponseEntity with an HTTP status of CREATED upon successful creation of the federation.
      */
     @PostMapping
-    public ResponseEntity saveFederation(@RequestBody FederationForm federation){
+    public ResponseEntity saveFederation(@RequestBody FederationDTO federation){
         federationService.create(federation);
         return new ResponseEntity(HttpStatus.CREATED);
     }
@@ -106,8 +107,9 @@ public class FederationController {
      * typically HTTP 204 (NO_CONTENT) if the update is successful
      */
     @PutMapping("/{id}")
-    public ResponseEntity updateFederation(@PathVariable UUID id, @RequestBody FederationForm federation){
-        federationService.update(id, federation);
+    public ResponseEntity updateFederation(@PathVariable UUID id, @RequestBody FederationDTO
+            federation){
+        if(federationService.update(id, federation).isEmpty()) throw new NotFoundException("Federation with ID " + id + " not found");
         return new ResponseEntity(HttpStatus.NO_CONTENT);
     }
 
@@ -121,6 +123,9 @@ public class FederationController {
      */
     @DeleteMapping("/{id}")
     public ResponseEntity deleteFederation(@PathVariable UUID id){
+        if (federationService.findById(id).isEmpty()) {
+            throw new NotFoundException("Federation with ID " + id + " not found");
+        }
         federationService.delete(id);
         return new ResponseEntity(HttpStatus.NO_CONTENT);
     }

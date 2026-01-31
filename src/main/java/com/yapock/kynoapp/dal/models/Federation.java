@@ -15,7 +15,7 @@ public class Federation {
     @Id
     @GeneratedValue(generator = "UUID")
     @UuidGenerator
-    @Column(length = 36, columnDefinition = "varchar", updatable = false, nullable = false)
+    @Column(length = 36, columnDefinition = "uuid", updatable = false, nullable = false)
     private UUID id;
     private String name;
     private String country;

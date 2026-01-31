@@ -1,6 +1,8 @@
 package com.yapock.kynoapp.dal.models;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import lombok.Builder;
 import org.hibernate.annotations.UuidGenerator;
@@ -17,7 +19,11 @@ public class Federation {
     @UuidGenerator
     @Column(length = 36, columnDefinition = "uuid", updatable = false, nullable = false)
     private UUID id;
+    @NotNull
+    @NotBlank
     private String name;
+    @NotBlank
+    @NotNull
     private String country;
     private String url;
 

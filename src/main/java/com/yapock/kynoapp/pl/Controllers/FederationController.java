@@ -3,10 +3,12 @@ package com.yapock.kynoapp.pl.Controllers;
 import com.yapock.kynoapp.bll.FederationService;
 import com.yapock.kynoapp.dal.mappers.FederationMappers;
 import com.yapock.kynoapp.pl.federation.FederationDTO;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -59,7 +61,6 @@ public class FederationController {
      * and logic while ensuring that the controller remains focused on HTTP request handling.
      */
     private final FederationService federationService;
-    private final FederationMappers federationMappers;
 
     /**
      * Retrieves a list of all federations.
@@ -86,15 +87,18 @@ public class FederationController {
     }
 
     /**
-     * Saves a new federation using the provided federation details.
+     * Creates a new federation with the provided details.
+     * The federation data is validated before being saved.
      *
-     * @param federation the federation details to be saved, encapsulated in a FederationForm object.
-     * @return a ResponseEntity with an HTTP status of CREATED upon successful creation of the federation.
+     * @param federation the {@code FederationDTO} object containing the details of the federation to be created.
+     *                   The input must be valid as per the constraints defined in {@code FederationDTO}.
+     * @return a {@code ResponseEntity} with an HTTP status of 201 (CREATED) if the federation is successfully created,
+     *         and no response body is returned.
      */
     @PostMapping
-    public ResponseEntity saveFederation(@RequestBody FederationDTO federation){
+    public ResponseEntity<Void> saveFederation(@Valid @RequestBody FederationDTO federation) {
         federationService.create(federation);
-        return new ResponseEntity(HttpStatus.CREATED);
+        return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
     /**
@@ -107,7 +111,7 @@ public class FederationController {
      * typically HTTP 204 (NO_CONTENT) if the update is successful
      */
     @PutMapping("/{id}")
-    public ResponseEntity updateFederation(@PathVariable UUID id, @RequestBody FederationDTO
+    public ResponseEntity updateFederation(@PathVariable UUID id, @Valid @RequestBody FederationDTO
             federation){
         if(federationService.update(id, federation).isEmpty()) throw new NotFoundException("Federation with ID " + id + " not found");
         return new ResponseEntity(HttpStatus.NO_CONTENT);

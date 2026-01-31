@@ -1,6 +1,7 @@
 package com.yapock.kynoapp.pl.Controllers;
 
 import com.yapock.kynoapp.bll.FederationService;
+import com.yapock.kynoapp.dal.models.Federation;
 import com.yapock.kynoapp.pl.federation.FederationDTO;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -50,17 +51,11 @@ class FederationControllerTest {
     private FederationDTO testFederationDTO;
 
     /**
-     * Initializes the test environment before each test method is executed.
+     * Sets up the testing environment before each test.
      *
-     * This method performs the following operations:
-     * 1. Generates a new random UUID and assigns it to the `federationId` field.
-     * 2. Creates an instance of `FederationDTO` with predefined test data, using the generated `federationId`.
-     * 3. Creates an instance of `FederationForm` with matching test data.
-     *
-     * These initialized objects (`federationId`, `testFederationDTO`, and `testFederationForm`) are used
-     * across various test cases to ensure consistent and isolated testing of the system under test.
-     *
-     * The method is annotated with `@BeforeEach`, ensuring that it is invoked once before the execution of each test method.
+     * Initializes necessary test objects and assigns unique identifiers for use in testing.
+     * Specifically, it generates a unique UUID for the federation and constructs a sample
+     * FederationDTO instance with predefined attributes such as ID, name, country, and URL.
      */
     @BeforeEach
     void setUp() {
@@ -75,27 +70,27 @@ class FederationControllerTest {
     }
 
     /**
-     * Tests the `GET /federation` endpoint to ensure it returns a JSON array of federations.
+     * Tests the HTTP GET endpoint for retrieving all federations.
+     * Ensures that the response is a JSON array containing federation objects
+     * with the expected attributes.
      *
-     * This test verifies that the controller:
-     * 1. Interacts with the `federationService` to fetch all federations.
-     * 2. Returns an HTTP status of 200 (OK).
-     * 3. Produces a response with a content type compatible with `application/json`.
-     * 4. Includes a JSON structure that matches the expected list of federations.
+     * Expected Behavior:
+     * - The response status should be 200 OK.
+     * - The response content type should be compatible with application/json.
+     * - The response body should be an array of federation objects, where each
+     *   object includes the following fields: id, name, country, and url.
      *
-     * Assertions:
-     * - The response body is verified as a JSON array.
-     * - The first object in the array contains valid values for `id`, `name`, `country`, and `url` fields.
+     * Test Setup:
+     * - Mocks the federationService's findall method to return a predefined list
+     *   of FederationDTO objects.
      *
-     * Mocks:
-     * - `federationService.findall()` is mocked to return a predefined list of federations.
-     *
-     * Preconditions:
-     * - `testFederationDTO` is initialized with expected data.
-     * - `BASE_PATH` defines the endpoint path for retrieving federations.
+     * Validations:
+     * - Asserts that the returned JSON array matches the structure and content
+     *   of the mocked federation data.
      *
      * Exceptions:
-     * - Throws `Exception` if the execution of the endpoint request fails or an assertion is not met.
+     * - This method throws an Exception in case of an unexpected error during
+     *   the execution of the test case.
      */
     @Test
     void getAllFederations_returnsJsonArray() throws Exception {
@@ -112,30 +107,30 @@ class FederationControllerTest {
     }
 
     /**
-     * Tests the `GET /federation/{id}` endpoint to ensure it retrieves a specific federation
-     * as a JSON object based on the provided federation ID.
+     * Tests the endpoint for retrieving a specific federation by its ID.
      *
-     * This test verifies the following behaviors:
-     * 1. The controller interacts with the `federationService` to fetch the federation by its ID.
-     * 2. Returns an HTTP status of 200 (OK) if the federation is found.
-     * 3. Produces a response with a content type compatible with `application/json`.
-     * 4. Returns a JSON object containing the expected fields: `id`, `name`, `country`, and `url`.
-     *
-     * Assertions:
-     * - Verifies that the response status is 200 (OK).
-     * - Ensures the response content type is `application/json`.
-     * - Validates the JSON structure for correct values of `id`, `name`, `country`, and `url`.
-     *
-     * Mocks:
-     * - `federationService.findById(UUID id)` is mocked to return a predefined `testFederationDTO`.
+     * This test invokes a GET request to the endpoint for retrieving a federation
+     * and expects a JSON representation of the federation to be returned. The test
+     * verifies that the response status is 200 OK, the response content type is
+     * application/json, and the JSON object in the response matches the expected
+     * federation data.
      *
      * Preconditions:
-     * - `federationId` is initialized with a valid UUID.
-     * - `testFederationDTO` contains test data matching the `federationId`.
-     * - `BASE_PATH` defines the endpoint path for retrieval.
+     * - `federationService.findById` must return an Optional containing a valid FederationDTO
+     *   when provided with the specified federation ID.
+     * - The `testFederationDTO` object must be initialized and contain valid data
+     *   for `id`, `name`, `country`, and `url` properties.
      *
-     * Exceptions:
-     * - Throws `Exception` if the execution of the endpoint request fails or an assertion is not met.
+     * Validations:
+     * - The HTTP response status must be 200 OK.
+     * - The content type of the HTTP response must be compatible with application/json.
+     * - The JSON response must contain:
+     *   - An `id` field matching the federation ID used in the request.
+     *   - A `name` field matching the `testFederationDTO.getName()` value.
+     *   - A `country` field matching the `testFederationDTO.getCountry()` value.
+     *   - A `url` field matching the `testFederationDTO.getUrl()` value.
+     *
+     * @throws Exception if any unexpected error occurs during the test execution
      */
     @Test
     void getFederationById_returnsJsonObject() throws Exception {
@@ -151,14 +146,15 @@ class FederationControllerTest {
     }
 
     /**
-     * Test to verify that fetching a federation by its ID returns a 404 Not Found status
-     * when the requested federation is not present in the system.
+     * Tests the scenario where a GET request is made to retrieve a federation by its ID,
+     * but the federation is not found in the system.
      *
-     * This method mocks the behavior of the federationService to return an empty Optional
-     * when searching for a federation with the given ID. It then performs a GET request to
-     * the corresponding API endpoint and expects the response to have a 404 status code.
+     * <b>Test Case:</b>
+     * - Given: The federation service returns an empty Optional for the provided federation ID.
+     * - When: A GET request is performed to fetch the federation by its ID.
+     * - Then: The response status is 404 (Not Found).
      *
-     * @throws Exception if an error occurs during the execution of the request.
+     * @throws Exception if an error occurs while executing the request.
      */
     @Test
     void getFederationById_returnsNotFound_whenFederationNotFound() throws Exception {
@@ -168,109 +164,229 @@ class FederationControllerTest {
                 .andExpect(status().isNotFound());
     }
 
+        /**
+         * Tests the functionality of creating a new federation via the controller.
+         *
+         * This method ensures the following:
+         * 1. The create endpoint is invoked with the appropriate HTTP POST method
+         *    and a JSON payload representing the federation details.
+         * 2. The HTTP response status is 201 Created upon successful creation.
+         * 3. The federationService's `create` method is called with a valid
+         *    FederationDTO object.
+         *
+         * @throws Exception if the request execution or verification fails.
+         */
+        @Test
+        void createFederation_returnsCreated_andCallsService() throws Exception {
+            mockMvc.perform(post(BASE_PATH)
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content(objectMapper.writeValueAsString(testFederationDTO)))
+                    .andExpect(status().isCreated());
+
+            verify(federationService).create(any(FederationDTO.class));
+        }
+
+        /**
+         * Tests the creation of a Federation when the federation name is null.
+         *
+         * This method verifies that a federation creation request with a null name
+         * results in a bad request (HTTP 400). It also ensures that the error
+         * response contains exactly two error messages, which may correspond to
+         * constraints such as the `@NotBlank` and `@NotNull` annotations on the
+         * `name` field of the `FederationDTO`.
+         *
+         * Steps:
+         * 1. Builds a `FederationDTO` object with a null `name` field while keeping
+         *    other required fields valid.
+         * 2. Sends a POST request to the Federation creation API with the
+         *    constructed `FederationDTO` as JSON payload.
+         * 3. Asserts that the response status is HTTP 400 (Bad Request).
+         * 4. Further asserts that the JSON response body contains two error messages.
+         *
+         * @throws Exception if the mock request or processing fails during execution.
+         */
+        @Test
+        void testCreateFederationNullFederationName() throws Exception{
+            FederationDTO federationDTO = FederationDTO.builder()
+                    .name(null)
+                    .country("Belgique")
+                    .url("http://example.valid").build();
+
+            mockMvc.perform(post(BASE_PATH)
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content(objectMapper.writeValueAsString(federationDTO)))
+                    .andExpect(status().isBadRequest())
+                    .andExpect(jsonPath("$.length()").value(2));
+        }
+
     /**
-     * Tests the `POST /federation` endpoint to ensure it successfully creates a new federation
-     * with the provided details and invokes the associated service method.
+     * Tests the scenario where a federation is attempted to be created with a null country value.
      *
-     * This test verifies the following behaviors:
-     * 1. The endpoint accepts a JSON request body representing a FederationForm object.
-     * 2. Returns an HTTP status of 201 (Created) upon successful creation.
-     * 3. Calls the `save(FederationForm federation)` method of the `federationService`
-     *    with the deserialized FederationForm object.
-     *
-     * Assertions:
-     * - Verifies that the HTTP response status is 201 (Created).
-     * - Confirms that the `federationService.save` method is invoked with any instance
-     *   of `FederationForm`, validating the integration between the controller and service layers.
-     *
-     * Mocks:
-     * - `mockMvc` simulates the HTTP request to the `POST /federation` endpoint.
-     * - `federationService.save(FederationForm federation)` is mocked to verify its invocation.
+     * Validates:
+     * - The server returns a 400 Bad Request status.
+     * - The error response contains two validation error messages.
      *
      * Preconditions:
-     * - `testFederationForm` is a predefined object with valid test data.
-     * - `BASE_PATH` defines the endpoint path for creating federations.
-     * - `objectMapper` is configured for serializing the `testFederationForm` to JSON.
+     * - The {@link FederationDTO} object is built with the name set to "test name",
+     *   the country set to null, and the URL set to a valid URL format.
      *
-     * Exceptions:
-     * - Throws `Exception` if the execution of the request fails or if any assertions are not met.
+     * Execution:
+     * - A POST request is made to the federation creation endpoint with the given {@link FederationDTO}.
+     * - The response is validated to ensure proper handling of the null country value.
+     *
+     * Expected Behavior:
+     * - The service rejects the request with a 400 Bad Request status due to a missing required field.
+     * - The response contains validation error details indicating the reason for the failure.
+     *
+     * Throws:
+     * - Exception if the request handling or assertions fail during test execution.
      */
     @Test
-    void createFederation_returnsCreated_andCallsService() throws Exception {
+    void testCreateFederationNullCountry() throws Exception{
+        FederationDTO federationDTO = FederationDTO.builder()
+                .name("test name")
+                .country(null)
+                .url("http://example.valid").build();
+
         mockMvc.perform(post(BASE_PATH)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(testFederationDTO)))
-                .andExpect(status().isCreated());
-
-        verify(federationService).create(any(FederationDTO.class));
+                        .content(objectMapper.writeValueAsString(federationDTO)))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.length()").value(2));
     }
 
+        /**
+         * Tests the `updateFederation` functionality by ensuring that it returns a "No Content" (204) status
+         * when the update operation is successful and that the corresponding service method
+         * is invoked with the correct ID and request body.
+         *
+         * This test performs the following:
+         * 1. Configures the `federationService.update` mock to return a populated `Optional` of `Federation`
+         *    when called with the correct ID and a `FederationDTO` instance.
+         * 2. Executes a `PUT` request to the endpoint with the given ID and serialized `FederationDTO` as the request body.
+         * 3. Validates that the response status is `204 No Content`.
+         * 4. Verifies that the `update` method of the mocked `federationService` is invoked with the correct arguments.
+         *
+         * @throws Exception if the PUT request or validation encounters issues.
+         */
+        @Test
+        void updateFederation_returnsNoContent_andCallsServiceWithIdAndBody() throws Exception {
+            given(federationService.update(eq(federationId), any(FederationDTO.class)))
+                    .willReturn(Optional.of(new Federation()));
+
+            mockMvc.perform(put(BASE_PATH + "/" + federationId)
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .accept(MediaType.APPLICATION_JSON)
+                            .content(objectMapper.writeValueAsString(testFederationDTO)))
+                    .andExpect(status().isNoContent());
+
+            verify(federationService).update(eq(federationId), any(FederationDTO.class));
+        }
+
     /**
-     * Tests the `PUT /federation/{id}` endpoint to ensure it updates an existing federation
-     * with the provided details and invokes the associated service method.
+     * Tests the behavior of the update federation endpoint when the country field in
+     * the FederationDTO is null.
      *
-     * This test verifies the following behaviors:
-     * 1. The endpoint accepts a JSON request body representing a `FederationForm` object.
-     * 2. Calls the `update(UUID id, FederationForm federation)` method of the `federationService`
-     *    with the correct federation ID and deserialized `FederationForm` object as parameters.
-     * 3. Returns an HTTP status of 204 (No Content) upon successful update.
+     * This test ensures that the server returns a 400 Bad Request status and includes
+     * validation error details in the response when an update request is made with
+     * null as the value for the mandatory country field.
      *
-     * Assertions:
-     * - Confirms that the HTTP response status is 204 (No Content).
-     * - Validates that the `federationService.update` method is invoked exactly once with
-     *   the expected `federationId` and a `FederationForm` object.
+     * The test performs the following steps:
+     * 1. Creates a FederationDTO object with a null value for the country field.
+     * 2. Configures the mocked FederationService to return an Optional containing
+     *    a Federation object when its update method is called.
+     * 3. Performs a PUT request to the update endpoint with the JSON representation
+     *    of the FederationDTO object.
+     * 4. Validates the response status is 400 Bad Request.
+     * 5. Verifies that the response JSON contains the expected number of validation errors.
      *
-     * Mocks:
-     * - `mockMvc` simulates the HTTP request to the `PUT /federation/{id}` endpoint.
-     * - `federationService.update(UUID id, FederationForm federation)` is mocked to verify its invocation.
-     *
-     * Preconditions:
-     * - `federationId` is initialized with a valid UUID.
-     * - `testFederationForm` contains valid data for updating a federation.
-     * - `BASE_PATH` defines the endpoint's base path.
-     * - `objectMapper` is configured to serialize `testFederationForm` to JSON format.
-     *
-     * Exceptions:
-     * - Throws `Exception` if the request execution fails or if any assertions are not met.
+     * @throws Exception if an error occurs during the request or response processing.
      */
     @Test
-    void updateFederation_returnsNoContent_andCallsServiceWithIdAndBody() throws Exception {
+    void testUpdateFederationNullCountry() throws Exception{
+        FederationDTO federationDTO = FederationDTO.builder()
+                .name("test name")
+                .country(null)
+                .url("http://example.valid").build();
+
+        given(federationService.update(eq(federationId), any(FederationDTO.class)))
+                .willReturn(Optional.of(new Federation()));
+
         mockMvc.perform(put(BASE_PATH + "/" + federationId)
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(testFederationDTO)))
-                .andExpect(status().isNoContent());
-
-        verify(federationService).update(eq(federationId), any(FederationDTO.class));
+                        .content(objectMapper.writeValueAsString(federationDTO)))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.length()").value(2));
     }
 
     /**
-     * Tests the `DELETE /federation/{id}` endpoint to ensure it successfully deletes a federation
-     * and invokes the associated service method with the correct federation ID.
+     * Tests the behavior of the `update` endpoint when attempting to update a federation
+     * with a null name in the request payload.
      *
-     * This test verifies the following behaviors:
-     * 1. The endpoint correctly accepts a DELETE request with a federation ID as part of the URL path.
-     * 2. Calls the `delete(UUID id)` method of the `federationService` with the provided ID.
-     * 3. Returns an HTTP status of 204 (No Content) upon successful execution.
-     *
-     * Assertions:
-     * - Confirms that the HTTP response status is 204 (No Content).
-     * - Validates that the `federationService.delete(UUID id)` method is invoked exactly once
-     *   with the expected `federationId`.
-     *
-     * Mocks:
-     * - `mockMvc` simulates the HTTP DELETE request to the `/federation/{id}` endpoint.
-     * - `federationService.delete(UUID id)` is mocked to verify its invocation.
+     * This test ensures that attempting to update a federation with a null name results
+     * in a `400 Bad Request` HTTP response. It also verifies that the error response body
+     * contains exactly two validation error messages, which indicate the reasons for the
+     * request failure.
      *
      * Preconditions:
-     * - `federationId` is initialized with a valid UUID.
-     * - `BASE_PATH` defines the endpoint's base path for federation operations.
+     * - A valid `federationId` value is provided.
+     * - The `federationDTO` object is constructed with a null `name`, a valid `country`,
+     *   and a valid `url`.
      *
-     * Exceptions:
-     * - Throws `Exception` if the execution of the request fails or if any assertions are not met.
+     * Expected Outcomes:
+     * - The `federationService.update` method is stubbed to return a non-empty `Optional`
+     *   containing a `Federation` instance.
+     * - The mock HTTP PUT request to the `update` endpoint returns a `400 Bad Request` status.
+     * - The returned JSON response body contains two validation errors.
+     *
+     * Steps:
+     * 1. Build a `FederationDTO` object with a null `name`.
+     * 2. Stub the `federationService.update` method to simulate a successful update call.
+     * 3. Perform a PUT request to the `update` API endpoint with the above `federationDTO`.
+     * 4. Verify the response status is `400 Bad Request`.
+     * 5. Assert that the validation error messages in the response body total two.
      */
     @Test
+    void testUpdateFederationNullName() throws Exception{
+        FederationDTO federationDTO = FederationDTO.builder()
+                .name(null)
+                .country("test country")
+                .url("http://example.valid").build();
+
+        given(federationService.update(eq(federationId), any(FederationDTO.class)))
+                .willReturn(Optional.of(new Federation()));
+
+        mockMvc.perform(put(BASE_PATH + "/" + federationId)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(federationDTO)))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.length()").value(2));
+    }
+
+        /**
+         * Tests the deletion of a federation by its ID in the FederationController.
+         *
+         * This test verifies the following:
+         * - The `delete` endpoint for a specified federation ID returns a status of 204 No Content upon successful deletion.
+         * - The `federationService.delete(UUID id)` method is called exactly once with the correct federation ID.
+         *
+         * Preconditions:
+         * - The `federationService.findById(UUID id)` method is stubbed to return an `Optional` containing
+         *   a valid `FederationDTO` when invoked with the specified federation ID.
+         *
+         * Expectations:
+         * - Upon executing the `DELETE` request to the specified endpoint, the response status is 204 No Content.
+         * - The `federationService.delete(UUID id)` method is verified to have been called with the correct federation ID.
+         *
+         * Exceptions:
+         * - Throws `Exception` if any unexpected error occurs during the execution of the test.
+         */
+    @Test
     void deleteFederation_returnsNoContent_andCallsServiceWithId() throws Exception {
+        given(federationService.findById(federationId)).willReturn(Optional.of(testFederationDTO));
+
         mockMvc.perform(delete(BASE_PATH + "/" + federationId)
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNoContent());

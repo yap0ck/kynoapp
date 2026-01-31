@@ -1,27 +1,24 @@
 package com.yapock.kynoapp.dal.models;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.*;
 import lombok.Builder;
+import org.hibernate.annotations.UuidGenerator;
 
 import java.util.UUID;
 
 @Entity
-@Getter
+@Getter @Setter
 @NoArgsConstructor @AllArgsConstructor
 @Builder
 public class Federation {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(generator = "UUID")
+    @UuidGenerator
+    @Column(length = 36, columnDefinition = "varchar", updatable = false, nullable = false)
     private UUID id;
-    @Setter
     private String name;
-    @Setter
     private String country;
-    @Setter
     private String url;
 
 

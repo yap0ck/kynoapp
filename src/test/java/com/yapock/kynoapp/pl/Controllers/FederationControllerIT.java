@@ -4,19 +4,32 @@ import com.yapock.kynoapp.dal.mappers.FederationMappers;
 import com.yapock.kynoapp.dal.models.Federation;
 import com.yapock.kynoapp.dal.repositories.FederationRepository;
 import com.yapock.kynoapp.pl.federation.FederationDTO;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.annotation.Rollback;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.context.WebApplicationContext;
+import tools.jackson.databind.ObjectMapper;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.BDDMockito.given;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 /**
  * Tests the deletion functionality of the `deleteFederation` method in the `federationController`.
@@ -45,6 +58,7 @@ class FederationControllerIT {
     private static final String TEST_COUNTRY = "test";
     private static final String TEST_URL = "test";
     private static final String UPDATED_NAME = "UPDATED";
+    private static final String BASE_PATH = "/federation";
 
     @Autowired
     FederationController federationController;
@@ -54,6 +68,69 @@ class FederationControllerIT {
 
     @Autowired
     FederationMappers federationMappers;
+
+    @Autowired
+    WebApplicationContext wac;
+
+    @Autowired
+    ObjectMapper objectMapper;
+
+    MockMvc mockMvc;
+
+    @BeforeEach
+    void setUp() {
+        mockMvc = MockMvcBuilders.webAppContextSetup(wac).build();
+    }
+
+    /**
+     * Tests the update operation for a Federation entity with a null name.
+     *
+     * This method retrieves an existing Federation entity, sets its name to null,
+     * and attempts to update it using a PUT request. The test verifies that the
+     * system returns a 400 Bad Request HTTP status and that the validation
+     * response contains exactly two error messages.
+     *
+     * @throws Exception if an error occurs during the execution of the test
+     */
+    @Test
+    void testUpdateFederationNullName() throws Exception{
+        Federation federation = federationRepository.findAll().get(0);
+
+        federation.setName(null);
+
+        mockMvc.perform(put(BASE_PATH + "/" + federation.getId())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(federation)))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.length()").value(2));
+    }
+
+    /**
+     * Tests the behavior of the federation update API endpoint when the country field is set to null.
+     *
+     * This test case performs the following steps:
+     * 1. Retrieves an existing federation entity from the repository.
+     * 2. Sets the country field of the retrieved federation to null.
+     * 3. Sends an HTTP PUT request to update the federation with the modified data.
+     * 4. Verifies that the API responds with a "Bad Request" (HTTP 400) status.
+     * 5. Asserts that the response contains exactly two validation errors.
+     *
+     * @throws Exception if an error occurs during the execution of the test.
+     */
+    @Test
+    void testUpdateFederationNullCountry() throws Exception{
+        Federation federation = federationRepository.findAll().get(0);
+
+        federation.setCountry(null);
+
+        mockMvc.perform(put(BASE_PATH + "/" + federation.getId())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(federation)))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.length()").value(2));
+    }
 
     /**
      * Tests the retrieval of a federation by its unique identifier.

@@ -1,6 +1,7 @@
 package com.yapock.kynoapp.pl.Controllers;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.TransactionSystemException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -22,5 +23,10 @@ public class CustomErrorController {
             .toList();
 
         return ResponseEntity.badRequest().body(errorList);
+    }
+
+    @ExceptionHandler
+    ResponseEntity handleJPAViolation(TransactionSystemException ex) {
+        return ResponseEntity.badRequest().body(ex.getMessage());
     }
 }

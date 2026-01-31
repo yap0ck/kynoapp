@@ -5,6 +5,7 @@ import com.yapock.kynoapp.dal.models.Federation;
 import com.yapock.kynoapp.pl.federation.FederationDTO;
 import com.yapock.kynoapp.pl.federation.FederationForm;
 import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -13,6 +14,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.UUID;
 
 /**
  * The FederationController class provides RESTful endpoints for managing federations.
@@ -42,7 +44,7 @@ import java.util.List;
  */
 @RestController
 @Slf4j
-@AllArgsConstructor
+@RequiredArgsConstructor
 @RequestMapping("/federation")
 public class FederationController {
     /**
@@ -69,7 +71,7 @@ public class FederationController {
      * @return a ResponseEntity containing a list of FederationDTO objects representing the federations.
      */
     @RequestMapping(method = RequestMethod.GET)
-    public ResponseEntity<List<FederationDTO>> listFederations(Model model){
+    public ResponseEntity<List<FederationDTO>> listFederations(){
         return ResponseEntity.ok(federationService.findall());
     }
 
@@ -81,7 +83,7 @@ public class FederationController {
      *         If the federation with the specified ID is not found, the response may include an appropriate HTTP status.
      */
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
-    public ResponseEntity<FederationDTO> getFederation(@PathVariable Long id){
+    public ResponseEntity<FederationDTO> getFederation(@PathVariable UUID id){
         return ResponseEntity.ok(federationService.findById(id));
     }
 
@@ -104,12 +106,12 @@ public class FederationController {
      * @param id the unique identifier of the federation to update
      * @param federation the FederationForm object containing the updated details of the federation
      * @return a ResponseEntity with an HTTP status indicating the outcome of the operation,
-     *         typically HTTP 200 (OK) if the update is successful
+     * typically HTTP 204 (NO_CONTENT) if the update is successful
      */
     @PutMapping("/{id}")
-    public ResponseEntity updateFederation(@PathVariable Long id, @RequestBody FederationForm federation){
+    public ResponseEntity updateFederation(@PathVariable UUID id, @RequestBody FederationForm federation){
         federationService.update(id, federation);
-        return new ResponseEntity(HttpStatus.OK);
+        return new ResponseEntity(HttpStatus.NO_CONTENT);
     }
 
     /**
@@ -121,7 +123,7 @@ public class FederationController {
      *         Returns HTTP status 204 (NO_CONTENT) if the deletion is successful.
      */
     @DeleteMapping("/{id}")
-    public ResponseEntity deleteFederation(@PathVariable Long id){
+    public ResponseEntity deleteFederation(@PathVariable UUID id){
         federationService.delete(id);
         return new ResponseEntity(HttpStatus.NO_CONTENT);
     }

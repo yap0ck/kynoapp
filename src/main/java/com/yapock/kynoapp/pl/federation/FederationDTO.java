@@ -2,8 +2,10 @@ package com.yapock.kynoapp.pl.federation;
 
 import com.yapock.kynoapp.dal.models.Federation;
 
+import java.util.UUID;
+
 public record FederationDTO(
-        long id,
+        UUID id,
         String name,
         String country,
         String url

@@ -5,11 +5,13 @@ import com.yapock.kynoapp.dal.repositories.FederationRepository;
 import com.yapock.kynoapp.bll.FederationService;
 import com.yapock.kynoapp.pl.federation.FederationDTO;
 import com.yapock.kynoapp.pl.federation.FederationForm;
-import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.UUID;
 
 /**
  * Implementation of the FederationService interface. This service
@@ -19,7 +21,7 @@ import java.util.List;
  */
 @Slf4j
 @Service
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class FederationServiceImpl implements FederationService {
     /**
      * A repository interface for performing CRUD operations on
@@ -46,7 +48,7 @@ public class FederationServiceImpl implements FederationService {
      * @return a FederationDTO representation of the federation entity, or null if no entity is found
      */
     @Override
-    public FederationDTO findById(Long id) {
+    public FederationDTO findById(UUID id) {
         return FederationDTO.fromEntity(federationRepository.findById(id).orElse(null));
     }
 
@@ -72,7 +74,7 @@ public class FederationServiceImpl implements FederationService {
      * @param federation the FederationForm object containing the updated details for the Federation
      */
     @Override
-    public void update(long id, FederationForm federation) {
+    public void update(UUID id, FederationForm federation) {
         federationRepository.findById(id).ifPresent(federationEntity -> {
             federationEntity.setName(federation.name());
             federationEntity.setCountry(federation.country());
@@ -87,7 +89,7 @@ public class FederationServiceImpl implements FederationService {
      * @param id the unique identifier of the federation to be deleted
      */
     @Override
-    public void delete(long id) {
+    public void delete(UUID id) {
         federationRepository.deleteById(id);
     }
 

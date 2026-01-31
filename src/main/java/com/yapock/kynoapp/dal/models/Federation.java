@@ -7,6 +7,8 @@ import jakarta.persistence.Id;
 import lombok.*;
 import lombok.Builder;
 
+import java.util.UUID;
+
 @Entity
 @Getter
 @NoArgsConstructor @AllArgsConstructor
@@ -14,7 +16,7 @@ import lombok.Builder;
 public class Federation {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private UUID id;
     @Setter
     private String name;
     @Setter

@@ -1,19 +1,16 @@
 package com.yapock.kynoapp.pl.Controllers;
 
 import com.yapock.kynoapp.bll.FederationService;
-import com.yapock.kynoapp.dal.models.Federation;
 import com.yapock.kynoapp.pl.federation.FederationDTO;
 import com.yapock.kynoapp.pl.federation.FederationForm;
-import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 /**
@@ -65,10 +62,10 @@ public class FederationController {
     private final FederationService federationService;
 
     /**
-     * Retrieves a list of all federations available in the system.
+     * Retrieves a list of all federations.
      *
-     * @param model the model object to be used for populating data, if needed.
-     * @return a ResponseEntity containing a list of FederationDTO objects representing the federations.
+     * @return a {@code ResponseEntity} containing a list of {@code FederationDTO} objects.
+     *         The response will include an HTTP status of 200 (OK) if the operation is successful.
      */
     @RequestMapping(method = RequestMethod.GET)
     public ResponseEntity<List<FederationDTO>> listFederations(){
@@ -80,11 +77,11 @@ public class FederationController {
      *
      * @param id the unique identifier of the federation to be retrieved.
      * @return a {@code ResponseEntity} containing the details of the federation as a {@code FederationDTO}.
-     *         If the federation with the specified ID is not found, the response may include an appropriate HTTP status.
+     * If the federation with the specified ID is not found, the response may include an appropriate HTTP status.
      */
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
-    public ResponseEntity<FederationDTO> getFederation(@PathVariable UUID id){
-        return ResponseEntity.ok(federationService.findById(id));
+    public ResponseEntity<Optional<FederationDTO>> getFederation(@PathVariable UUID id){
+        return ResponseEntity.of(Optional.of(Optional.ofNullable(federationService.findById(id).orElseThrow(() -> new NotFoundException("Federation with ID " + id + " not found")))));
     }
 
     /**
@@ -95,7 +92,7 @@ public class FederationController {
      */
     @PostMapping
     public ResponseEntity saveFederation(@RequestBody FederationForm federation){
-        federationService.save(federation);
+        federationService.create(federation);
         return new ResponseEntity(HttpStatus.CREATED);
     }
 

@@ -3,21 +3,25 @@ package com.yapock.kynoapp.bll.serviceImpls;
 import com.yapock.kynoapp.dal.models.Federation;
 import com.yapock.kynoapp.dal.repositories.FederationRepository;
 import com.yapock.kynoapp.bll.FederationService;
+import com.yapock.kynoapp.pl.Controllers.NotFoundException;
 import com.yapock.kynoapp.pl.federation.FederationDTO;
 import com.yapock.kynoapp.pl.federation.FederationForm;
-import lombok.NoArgsConstructor;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 /**
- * Implementation of the FederationService interface. This service
- * facilitates operations related to federations such as retrieval, creation,
- * updating, and deletion by interacting with the data layer through
- * the FederationRepository.
+ * Implementation of the {@link FederationService} interface that provides the business logic
+ * for managing federations. This service interacts with the persistence layer through the
+ * {@link FederationRepository} to perform CRUD operations on {@link Federation} entities.
+ *
+ * The class uses constructor injection to initialize dependencies and is marked as a Spring
+ * {@code @Service} to identify it as a service component in the application context.
  */
 @Slf4j
 @Service
@@ -48,8 +52,8 @@ public class FederationServiceImpl implements FederationService {
      * @return a FederationDTO representation of the federation entity, or null if no entity is found
      */
     @Override
-    public FederationDTO findById(UUID id) {
-        return FederationDTO.fromEntity(federationRepository.findById(id).orElse(null));
+    public Optional<FederationDTO> findById(UUID id) {
+        return Optional.of(FederationDTO.fromEntity(federationRepository.findById(id).orElseThrow(EntityNotFoundException::new)));
     }
 
     /**
@@ -58,7 +62,7 @@ public class FederationServiceImpl implements FederationService {
      * @param federation the {@code FederationForm} containing the data to create a new federation
      */
     @Override
-    public void save(FederationForm federation) {
+    public void create(FederationForm federation) {
         federationRepository.save(Federation.builder()
                 .name(federation.name())
                 .country(federation.country())
@@ -92,6 +96,4 @@ public class FederationServiceImpl implements FederationService {
     public void delete(UUID id) {
         federationRepository.deleteById(id);
     }
-
-
 }

@@ -13,6 +13,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import tools.jackson.databind.ObjectMapper;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 import static org.mockito.ArgumentMatchers.any;
@@ -146,7 +147,7 @@ class FederationControllerTest {
      */
     @Test
     void getFederationById_returnsJsonObject() throws Exception {
-        given(federationService.findById(federationId)).willReturn(testFederationDTO);
+        given(federationService.findById(federationId)).willReturn(Optional.ofNullable(testFederationDTO));
 
         mockMvc.perform(get(BASE_PATH + "/" + federationId).accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
@@ -155,6 +156,24 @@ class FederationControllerTest {
                 .andExpect(jsonPath("$.name").value(testFederationDTO.name()))
                 .andExpect(jsonPath("$.country").value(testFederationDTO.country()))
                 .andExpect(jsonPath("$.url").value(testFederationDTO.url()));
+    }
+
+    /**
+     * Test to verify that fetching a federation by its ID returns a 404 Not Found status
+     * when the requested federation is not present in the system.
+     *
+     * This method mocks the behavior of the federationService to return an empty Optional
+     * when searching for a federation with the given ID. It then performs a GET request to
+     * the corresponding API endpoint and expects the response to have a 404 status code.
+     *
+     * @throws Exception if an error occurs during the execution of the request.
+     */
+    @Test
+    void getFederationById_returnsNotFound_whenFederationNotFound() throws Exception {
+        given(federationService.findById(federationId)).willReturn(Optional.empty());
+
+        mockMvc.perform(get(BASE_PATH + "/" + federationId).accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNotFound());
     }
 
     /**
@@ -191,7 +210,7 @@ class FederationControllerTest {
                         .content(objectMapper.writeValueAsString(testFederationForm)))
                 .andExpect(status().isCreated());
 
-        verify(federationService).save(any(FederationForm.class));
+        verify(federationService).create(any(FederationForm.class));
     }
 
     /**

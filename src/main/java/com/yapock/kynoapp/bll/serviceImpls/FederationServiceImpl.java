@@ -1,10 +1,10 @@
 package com.yapock.kynoapp.bll.serviceImpls;
 
-import com.yapock.kynoapp.dal.mappers.FederationMappers;
-import com.yapock.kynoapp.dal.models.Federation;
+import com.yapock.kynoapp.dal.mappers.FederationMapper;
+import com.yapock.kynoapp.dal.models.federation.Federation;
 import com.yapock.kynoapp.dal.repositories.FederationRepository;
 import com.yapock.kynoapp.bll.FederationService;
-import com.yapock.kynoapp.pl.federation.FederationDTO;
+import com.yapock.kynoapp.dal.models.federation.FederationDTO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -12,7 +12,6 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
-import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * Implementation of the {@link FederationService} interface that provides the business logic
@@ -33,25 +32,25 @@ public class FederationServiceImpl implements FederationService {
      * persistence and retrieval of data related to federations.
      */
     private final FederationRepository federationRepository;
-    private final FederationMappers federationMappers;
+    private final FederationMapper federationMapper;
 
     @Override
     public List<FederationDTO> findall() {
         return federationRepository.findAll()
                 .stream()
-                .map(federationMappers::federationToFederationDTO)
+                .map(federationMapper::federationToFederationDTO)
                 .toList();
     }
 
     @Override
     public Optional<FederationDTO> findById(UUID id) {
         return federationRepository.findById(id)
-                .map(federationMappers::federationToFederationDTO);
+                .map(federationMapper::federationToFederationDTO);
     }
 
     @Override
     public void create(FederationDTO federation) {
-        federationRepository.save(federationMappers.federationDTOtoFederation(federation));
+        federationRepository.save(federationMapper.federationDTOtoFederation(federation));
     }
 
     @Override

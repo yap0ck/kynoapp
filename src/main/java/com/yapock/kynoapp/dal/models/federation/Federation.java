@@ -1,4 +1,4 @@
-package com.yapock.kynoapp.dal.models;
+package com.yapock.kynoapp.dal.models.federation;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;

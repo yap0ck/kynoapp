@@ -1,4 +1,4 @@
-package com.yapock.kynoapp.pl.Controllers;
+package com.yapock.kynoapp.pl.exceptions;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;

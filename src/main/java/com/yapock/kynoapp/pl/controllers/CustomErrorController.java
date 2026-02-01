@@ -1,4 +1,4 @@
-package com.yapock.kynoapp.pl.Controllers;
+package com.yapock.kynoapp.pl.controllers;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.TransactionSystemException;

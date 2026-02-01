@@ -1,6 +1,6 @@
 package com.yapock.kynoapp.dal.repositories;
 
-import com.yapock.kynoapp.dal.models.Federation;
+import com.yapock.kynoapp.dal.models.federation.Federation;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;

@@ -1,7 +1,7 @@
 package com.yapock.kynoapp.bll.serviceImpls;
 
 import com.yapock.kynoapp.bll.BreedCsvService;
-import com.yapock.kynoapp.dal.models.BreedCSVRecord;
+import com.yapock.kynoapp.dal.models.breed.BreedCSVRecord;
 import org.junit.jupiter.api.Test;
 import org.springframework.util.ResourceUtils;
 

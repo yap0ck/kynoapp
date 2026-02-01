@@ -1,8 +1,8 @@
-package com.yapock.kynoapp.pl.Controllers;
+package com.yapock.kynoapp.pl.controllers;
 
 import com.yapock.kynoapp.bll.FederationService;
-import com.yapock.kynoapp.dal.models.Federation;
-import com.yapock.kynoapp.pl.federation.FederationDTO;
+import com.yapock.kynoapp.dal.models.federation.Federation;
+import com.yapock.kynoapp.dal.models.federation.FederationDTO;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

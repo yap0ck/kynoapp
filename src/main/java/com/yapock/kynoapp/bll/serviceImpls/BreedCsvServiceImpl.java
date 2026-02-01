@@ -2,7 +2,7 @@ package com.yapock.kynoapp.bll.serviceImpls;
 
 import com.opencsv.bean.CsvToBeanBuilder;
 import com.yapock.kynoapp.bll.BreedCsvService;
-import com.yapock.kynoapp.dal.models.BreedCSVRecord;
+import com.yapock.kynoapp.dal.models.breed.BreedCSVRecord;
 import org.springframework.stereotype.Service;
 
 import java.io.File;

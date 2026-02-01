@@ -1,9 +1,9 @@
 package com.yapock.kynoapp.dal.utils;
 
 import com.yapock.kynoapp.bll.BreedCsvService;
-import com.yapock.kynoapp.dal.models.Breed;
-import com.yapock.kynoapp.dal.models.BreedCSVRecord;
-import com.yapock.kynoapp.dal.models.Federation;
+import com.yapock.kynoapp.dal.models.breed.Breed;
+import com.yapock.kynoapp.dal.models.breed.BreedCSVRecord;
+import com.yapock.kynoapp.dal.models.federation.Federation;
 import com.yapock.kynoapp.dal.repositories.BreedRepository;
 import com.yapock.kynoapp.dal.repositories.FederationRepository;
 import lombok.RequiredArgsConstructor;

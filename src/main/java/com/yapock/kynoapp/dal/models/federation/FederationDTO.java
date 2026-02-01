@@ -1,7 +1,6 @@
-package com.yapock.kynoapp.pl.federation;
+package com.yapock.kynoapp.dal.models.federation;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.yapock.kynoapp.dal.models.Federation;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Builder;

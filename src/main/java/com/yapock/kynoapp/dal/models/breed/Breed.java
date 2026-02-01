@@ -1,6 +1,5 @@
-package com.yapock.kynoapp.dal.models;
+package com.yapock.kynoapp.dal.models.breed;
 
-import com.opencsv.bean.CsvBindByName;
 import jakarta.persistence.*;
 import lombok.*;
 

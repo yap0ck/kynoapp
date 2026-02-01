@@ -1,9 +1,10 @@
-package com.yapock.kynoapp.pl.Controllers;
+package com.yapock.kynoapp.pl.controllers;
 
-import com.yapock.kynoapp.dal.mappers.FederationMappers;
-import com.yapock.kynoapp.dal.models.Federation;
+import com.yapock.kynoapp.dal.mappers.FederationMapper;
+import com.yapock.kynoapp.dal.models.federation.Federation;
 import com.yapock.kynoapp.dal.repositories.FederationRepository;
-import com.yapock.kynoapp.pl.federation.FederationDTO;
+import com.yapock.kynoapp.dal.models.federation.FederationDTO;
+import com.yapock.kynoapp.pl.exceptions.NotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,14 +20,12 @@ import org.springframework.web.context.WebApplicationContext;
 import tools.jackson.databind.ObjectMapper;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -67,7 +66,7 @@ class FederationControllerIT {
     FederationRepository federationRepository;
 
     @Autowired
-    FederationMappers federationMappers;
+    FederationMapper federationMapper;
 
     @Autowired
     WebApplicationContext wac;
@@ -278,7 +277,7 @@ class FederationControllerIT {
     @Test
     void updateFederation_updatesName_andReturnsNoContent() {
         Federation federation = firstPersistedFederation();
-        FederationDTO dto = federationMappers.federationToFederationDTO(federation);
+        FederationDTO dto = federationMapper.federationToFederationDTO(federation);
         dto.setName(UPDATED_NAME);
 
         ResponseEntity<Void> response = federationController.updateFederation(federation.getId(), dto);

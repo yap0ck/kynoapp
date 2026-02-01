@@ -1,9 +1,7 @@
 package com.yapock.kynoapp.dal.models;
 
-import com.yapock.kynoapp.dal.models.Federation;
+import com.yapock.kynoapp.dal.models.federation.Federation;
 import jakarta.persistence.*;
-
-import java.util.UUID;
 
 @Entity
 public class Club {

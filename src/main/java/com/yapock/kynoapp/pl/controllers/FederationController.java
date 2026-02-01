@@ -1,14 +1,13 @@
-package com.yapock.kynoapp.pl.Controllers;
+package com.yapock.kynoapp.pl.controllers;
 
 import com.yapock.kynoapp.bll.FederationService;
-import com.yapock.kynoapp.dal.mappers.FederationMappers;
-import com.yapock.kynoapp.pl.federation.FederationDTO;
+import com.yapock.kynoapp.dal.models.federation.FederationDTO;
+import com.yapock.kynoapp.pl.exceptions.NotFoundException;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;

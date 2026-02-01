@@ -1,9 +1,14 @@
 spring:
+  docker:
+    compose:
+      enabled: false
+
   datasource:
     url: jdbc:postgresql://localhost:5432/kynoapp
     username: postgres
     password: admin
     driver-class-name: org.postgresql.Driver
+
   jpa:
     hibernate:
       ddl-auto: create
@@ -12,6 +17,7 @@ spring:
       hibernate:
         format_sql: true
     database: postgresql
+
 server:
   port: 8081
 

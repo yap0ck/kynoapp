@@ -31,3 +31,14 @@ build/
 
 ### VS Code ###
 .vscode/
+
+# Docker Compose local
+compose.yaml
+compose.yml
+docker-compose.yml
+docker-compose.yaml
+
+# --- Local env / secrets ---
+.env
+.env.*
+!.env.example
